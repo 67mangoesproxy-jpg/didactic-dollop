@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blooket Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2d2d2d;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 2px solid #4a4a4a;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #ff8535;
+        }
+
+        .container {
+            margin-top: 80px;
+            height: calc(100vh - 80px);
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Hide header in fullscreen */
+        .fullscreen .header {
+            display: none;
+        }
+
+        .fullscreen .container {
+            margin-top: 0;
+            height: 100vh;
+        }
+
+        /* Loading indicator */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎮 Blooket Player</h1>
+        <div class="controls">
+            <button onclick="goHome()">Home</button>
+            <button onclick="reloadFrame()">Reload</button>
+            <button onclick="toggleFullscreen()">Fullscreen</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <iframe 
+            id="blooketFrame" 
+            src="https://play.blooket.com"
+            allow="fullscreen; microphone; camera; autoplay; encrypted-media"
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <script>
+        // Simple Blooket Player
+        const frame = document.getElementById('blooketFrame');
+        
+        function goHome() {
+            frame.src = 'https://play.blooket.com';
+        }
+        
+        function reloadFrame() {
+            frame.src = frame.src;
+        }
+        
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Fullscreen error:', err);
+                });
+                document.body.classList.add('fullscreen');
+            } else {
+                document.exitFullscreen();
+                document.body.classList.remove('fullscreen');
+            }
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // F for fullscreen
+            if (e.key === 'f' || e.key === 'F') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+            // R for reload
+            if (e.key === 'r' || e.key === 'R') {
+                if (e.ctrlKey) return; // Don't interfere with Ctrl+R
+                e.preventDefault();
+                reloadFrame();
+            }
+            // Escape to exit fullscreen
+            if (e.key === 'Escape' && document.fullscreenElement) {
+                toggleFullscreen();
+            }
+        });
+        
+        // Frame loading events
+        frame.addEventListener('load', function() {
+            console.log('✅ Blooket loaded successfully');
+        });
+        
+        frame.addEventListener('error', function() {
+            console.log('❌ Failed to load Blooket');
+            alert('Unable to load Blooket. It may be blocked in your network.');
+        });
+        
+        console.log('🎮 Blooket Player Ready!');
+    </script>
+</body>
+</html>
